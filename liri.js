@@ -1,13 +1,14 @@
-// require("dotenv").config();
+require("dotenv").config();
 var fs = require('fs');
 // var keys = require("./keys.js");
+// var spotify = new spotify(keys.Spotify);
 var axios = require("axios");
-// var spotify = new spotify(keys.spotify);
+var Spotify = require('node-spotify-api');
 
+var artistList = [];
 var action = process.argv[2];
-// var value = process.argv[3];
 var value = (process.argv.slice(3)).join("+");
-console.log(value);
+var spotifyValue = (process.argv.slice(3)).join(" ");
 
 function concert(){
     axios.get("https://rest.bandsintown.com/artists/" + value + "/events?app_id=codingbootcamp&date=upcoming")
@@ -24,18 +25,64 @@ function concert(){
 };
     
 function spotify(){
-    console.log('spotify a song')
+ 
+    var spotify = new Spotify({
+        id: '***redacted***',
+        secret: '***redacted***'
+    });
+ 
+    if ( spotifyValue === null || spotifyValue === undefined || spotifyValue === ""){
+        spotify
+            .search({ type: 'track', query: 'The Sign, Ace of Base', limit: 1 })
+            .then(function(response) {
+                res = response.tracks.items[0];
+                function artistsArray (){
+                    for(i=0; i<res.artists.length; i++){
+                        artistList.push(res.artists[i].name);
+                    }
+                }
+            // console.log(res);
+            artistsArray();
+            console.log('\nNO SONG WAS ENTERED, PLEASE ENJOY THIS CLASSIC...\n------------------------')
+            console.log('Song Name: '+res.name+'\nArtists: '+artistList+
+            "\nAlbum: "+ (res.album.name) );
+    })
+    .catch(function(err) {
+        console.error(err);
+    });
+    }else{
+        spotify
+            .search({ type: 'track', query: spotifyValue, limit: 1 })
+            .then(function(response) {
+                res = response.tracks.items[0];
+                function artistsArray (){
+                    for(i=0; i<res.artists.length; i++){
+                        artistList.push(res.artists[i].name);
+                    }
+                }
+                
+            // console.log( response );
+            // console.log(res);
+            artistsArray();
+            console.log('\n------------------------')
+            console.log('Song Name: '+res.name+'\nArtists: '+artistList+
+            "\nAlbum: "+ (res.album.name) );
+            })
+            .catch(function(err) {
+                console.error(err);
+            });
+    }
+                
 };
     
 function movie(){
-    value = (process.argv.slice(3)).join("+");
-    console.log(value);
     if (value === null || value === undefined || value === ""){
 
         axios.get("http://www.omdbapi.com/?t=Mr.+Nobody=&plot=short&apikey=trilogy").then(
             function(response) {
                     var response = response.data
-                    console.log("\n----------------------------------------------------------------")
+                    // console.log(response);
+                    console.log("\nNO MOVIE WAS ENTERED, HERE IS ONE OF MY FAVS\n----------------------------------------------------------------")
                     console.log("Title: " + response.Title+ "\nYear: " + response.Year +
                     "\nIMDB Rating: "+response.Ratings[0].Value+"\nRotten Tomatoes Rating: "
                     +response.Ratings[1].Value +"\nCountry: "+ response.Country
@@ -59,8 +106,24 @@ function movie(){
 };
 
 function simonSays(){
-    console.log('read .txt file')
+    fs.readFile("random.txt", "utf8", function(error, data) {
+        if (error) {
+          return console.error(error);
+        }
+        var dataArr = data.split(",");
+
+        if(dataArr[0] == 'spotify-this-song'){
+            spotifyValue = dataArr[1];
+            spotify();
+        }       
+      
+      });
+      
 };
+
+function help(){
+    console.log('Hi, I am Liri. A Virtual assitant for all things entertainment!! \nnconcert-this <Any artistist name> - to find a list of upcoming live shows\nspotify-this-song <song name> - for song info(artist name not required)\nmovie-this <movie title> - for movie information\ndo-what-it-says - to find info about the song in the random.txt file')
+}
 
 switch (action){
     case 'concert-this':
@@ -77,5 +140,13 @@ switch (action){
 
     case 'do-what-it-says':
         simonSays();
+        break;
+
+    case 'help':
+        help();
+        break;
+        
+    default:
+        console.log("I did not get that, please try again!\nOr type 'help' for a list of my prompts");
         break;
 };
