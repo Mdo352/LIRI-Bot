@@ -12,16 +12,12 @@ var value = (process.argv.slice(3)).join("+");
 var spotifyValue = (process.argv.slice(3)).join(" ");
 
 function concert(){
+    console.log('Searching for '+spotifyValue+' concerts...\n\n');
+
     axios.get("https://rest.bandsintown.com/artists/" + value + "/events?app_id=codingbootcamp&date=upcoming")
     .then(
         function(response) {
-            // console.log('moment ex: '+moment().format('LTS') );
             for(i=0; i < response.data.length; i++){
-                var dateData = response.data[i].datetime;
-                var wrapped = moment(dateData);
-
-                // console.log('Date ex: '+wrapped.format('ll'));
-
                 console.log("---------------------------------\nVenue Name: "+response.data[i].venue.name+
                 "\nLocation: "+response.data[i].venue.city + ", " + response.data[i].venue.region +' '+ response.data[i].venue.country+
                 "\nDate: "+ moment(response.data[i].datetime).format('LLL')+"\n");
@@ -31,6 +27,8 @@ function concert(){
 };
     
 function spotify(){
+
+    console.log('Searching for song: '+spotifyValue+'...\n\n');
  
     var spotify = new Spotify({
         id: '*****redacted*****',
@@ -47,11 +45,11 @@ function spotify(){
                         artistList.push(res.artists[i].name);
                     }
                 }
-            // console.log(res);
             artistsArray();
-            console.log('\nNO SONG WAS ENTERED, PLEASE ENJOY THIS CLASSIC...\n------------------------')
+            // console.log(res);
+            console.log('NO SONG WAS ENTERED, PLEASE ENJOY THIS CLASSIC...\n------------------------')
             console.log('Song Name: '+res.name+'\nArtists: '+artistList+
-            "\nAlbum: "+ (res.album.name) );
+            "\nAlbum: "+ (res.album.name) + "\nPreview Link: "+res.preview_url );
     })
     .catch(function(err) {
         console.error(err);
@@ -70,9 +68,9 @@ function spotify(){
             // console.log( response );
             // console.log(res);
             artistsArray();
-            console.log('\n------------------------')
+            console.log('------------------------')
             console.log('Song Name: '+res.name+'\nArtists: '+artistList+
-            "\nAlbum: "+ (res.album.name) );
+            "\nAlbum: "+ (res.album.name) + "\nPreview Link: "+res.preview_url);
             })
             .catch(function(err) {
                 console.error(err);
@@ -82,13 +80,15 @@ function spotify(){
 };
     
 function movie(){
+    console.log('Searching for movie: '+spotifyValue+'...\n\n');
+
     if (value === null || value === undefined || value === ""){
 
         axios.get("http://www.omdbapi.com/?t=Mr.+Nobody=&plot=short&apikey=trilogy").then(
             function(response) {
                     var response = response.data
                     // console.log(response);
-                    console.log("\nNO MOVIE WAS ENTERED, HERE IS ONE OF MY FAVS\n----------------------------------------------------------------")
+                    console.log("NO MOVIE WAS ENTERED, HERE IS ONE OF MY FAVS\n----------------------------------------------------------------")
                     console.log("Title: " + response.Title+ "\nYear: " + response.Year +
                     "\nIMDB Rating: "+response.Ratings[0].Value+"\nRotten Tomatoes Rating: "
                     +response.Ratings[1].Value +"\nCountry: "+ response.Country
@@ -100,7 +100,7 @@ function movie(){
         axios.get("http://www.omdbapi.com/?t="+value+"&y=&plot=short&apikey=trilogy").then(
         function(response) {
                     var response = response.data
-                    console.log("\n----------------------------------------------------------------")
+                    console.log("----------------------------------------------------------------")
                     console.log("Title: " + response.Title+ "\nYear: " + response.Year +
                     "\nIMDB Rating: "+response.Ratings[0].Value+"\nRotten Tomatoes Rating: "
                     +response.Ratings[1].Value +"\nCountry: "+ response.Country
@@ -128,7 +128,7 @@ function simonSays(){
 };
 
 function help(){
-    console.log('Hi, I am Liri. A Virtual assitant for all things entertainment!! \nnconcert-this <Any artistist name> - to find a list of upcoming live shows\nspotify-this-song <song name> - for song info(artist name not required)\nmovie-this <movie title> - for movie information\ndo-what-it-says - to find info about the song in the random.txt file')
+    console.log('Hi, I am Liri. A Virtual assitant for all things entertainment!! Just follow my my prompts listed below to get started\n\n concert-this <Any artistist name> - to find a list of upcoming live shows\n\n spotify-this-song <song name> - for song info(artist name not required)\n\n movie-this <movie title> - for movie information\n\n do-what-it-says - to find info about the song in the random.txt file')
 }
 
 switch (action){
