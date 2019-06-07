@@ -10,9 +10,9 @@ In order for you to use this application you must first have [node.js](https://n
 ## Prompts
 every prompt using this application must start off with: _node liri.js_ followed by one these arguments.
 - help - to view a list of all the prompts and a brief description of what they return
-- concert-this <artist name> - returns a list of upcoming live shows for that artist
-- spotify-this-song <song name> - displays information and a link to the song
-- movie-this <movie name> - shows cast and info about the movie
+- concert-this "artist name" - returns a list of upcoming live shows for that artist
+- spotify-this-song "song name" - displays information and a link to the song
+- movie-this "movie name" - shows cast and info about the movie
 - do-what-it-says - Reads a .txt and returns info based on its data
 
 ## Built With
