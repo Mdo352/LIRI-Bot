@@ -1,10 +1,10 @@
 require("dotenv").config();
 var fs = require('fs');
-// var keys = require("./keys.js");
-// var spotify = new spotify(keys.spotify);
+var keys = require("./keys.js");
+var Spotify = require('node-spotify-api');
+var spotify = new Spotify(keys.spotify);
 var axios = require("axios");
 var moment = require('moment');
-var Spotify = require('node-spotify-api');
 
 var artistList = [];
 var action = process.argv[2];
@@ -26,14 +26,9 @@ function concert(){
     );
 };
     
-function spotify(){
+function spotifyFunction(){
 
     console.log('Searching for song: '+spotifyValue+'...\n\n');
- 
-    var spotify = new Spotify({
-        id: '*****redacted*****',
-        secret: '*****redacted*****'
-    });
  
     if ( spotifyValue === null || spotifyValue === undefined || spotifyValue === ""){
         spotify
@@ -137,7 +132,7 @@ switch (action){
         break;
 
     case 'spotify-this-song':
-        spotify();
+        spotifyFunction();
         break;
 
     case 'movie-this':
